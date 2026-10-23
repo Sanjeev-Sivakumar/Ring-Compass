@@ -177,6 +177,8 @@ def get_audio_duration(file_path: Path) -> float:
     return float(res.stdout.strip())
 
 
+import shutil
+
 async def synthesize_all_audio():
     print(f"\n--- [STEP 1] Synthesizing US English Audio Narration Clips ({VOICE_RATE}) ---", flush=True)
     total_dur = 0.0
@@ -186,9 +188,8 @@ async def synthesize_all_audio():
         seg_type = seg["type"]
 
         if seg_type == "hardware_clip":
-            # For the hardware clip, we use the actual duration of led.mp4 with native audio
-            vid_path = Path(seg["video_src"])
-            dur = get_audio_duration(vid_path)
+            # For the hardware clip, we use a clean 8.0s duration (beeps end at 6.8s, trailing noise eliminated)
+            dur = 8.000
             seg["duration"] = dur
             total_dur += dur
             print(f"[{idx+1}/{len(SCRIPT_SEGMENTS)}] {seg_id}: {dur:.2f}s (Physical Hardware Clip with native buzzer audio, narrator silent)", flush=True)
@@ -217,25 +218,33 @@ async def record_segment_video(p, seg, idx, total):
     seg_type = seg["type"]
     url = seg.get("url", "")
     out_webm_dir = SCRATCH_DIR / f"rec_{seg_id}"
+
+    # Critical: Purge any old stale recordings so only the brand-new webm is picked
+    if out_webm_dir.exists():
+        shutil.rmtree(out_webm_dir, ignore_errors=True)
     out_webm_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"\n--- [STEP 2.{idx+1}/{total}] Recording {seg_id} ({seg_type}) for {duration:.2f}s ---", flush=True)
 
     if seg_type == "hardware_clip":
-        # Standardize led.mp4 directly to 1080p 30fps
+        # Standardize led.mp4 directly to 1080p 30fps, trimming cleanly at 8.0s so buzzer (at 5.8s & 6.7s)
+        # finishes completely, followed by 1.2s of pure silence (no trailing clicks/noise)
         src_path = Path(seg["video_src"])
         out_mp4 = SCRATCH_DIR / f"muxed_{seg_id}.mp4"
         cmd = [
             "ffmpeg", "-y",
             "-i", str(src_path),
-            "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=#0E1214",
+            "-t", f"{duration:.3f}",
+            "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=#0E1214,setsar=1",
+            "-af", "afade=t=out:st=7.2:d=0.4,volume=enable='gt(t,7.6)':volume=0.0",
             "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", "30",
             "-c:a", "aac", "-b:a", "192k", "-ar", "44100",
+            "-shortest",
             str(out_mp4)
         ]
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         seg["muxed_path"] = out_mp4
-        print(f"  -> Standardized Hardware Clip: {out_mp4}", flush=True)
+        print(f"  -> Standardized Hardware Clip (Clean 8.0s, Buzzer isolated): {out_mp4}", flush=True)
         return
 
     browser = await p.chromium.launch(channel="msedge", headless=True)
@@ -248,12 +257,12 @@ async def record_segment_video(p, seg, idx, total):
 
     if seg_type == "slide":
         await page.goto(url)
-        await asyncio.sleep(duration + 0.5)
+        await asyncio.sleep(duration + 1.5)
 
     elif seg_type == "slide_questions":
         await page.goto(url)
         t0 = time.time()
-        while time.time() - t0 < (duration + 0.5):
+        while time.time() - t0 < (duration + 1.5):
             elapsed = time.time() - t0
             if elapsed >= 3.0:
                 await page.evaluate("window.showQuestion && window.showQuestion(1)")
@@ -270,7 +279,7 @@ async def record_segment_video(p, seg, idx, total):
     elif seg_type == "slide_conclusion":
         await page.goto(url)
         t0 = time.time()
-        while time.time() - t0 < (duration + 0.5):
+        while time.time() - t0 < (duration + 1.5):
             elapsed = time.time() - t0
             if elapsed >= 2.5:
                 await page.evaluate("window.showAnswer && window.showAnswer(1)")
@@ -289,90 +298,98 @@ async def record_segment_video(p, seg, idx, total):
     elif seg_type == "app_overview":
         await page.goto("http://127.0.0.1:5173/#/overview")
         await page.evaluate("window.__setActiveTab && window.__setActiveTab('overview')")
-        await asyncio.sleep(2.0)
+        btn = await page.query_selector("header button:has-text('Overview')")
+        if btn:
+            await btn.click()
+        await page.wait_for_selector("text=System Overview", timeout=10000)
+        await asyncio.sleep(2.5)
         # Smooth scroll top-to-bottom over (duration - 4.0s)
-        scroll_time = max(2.5, duration - 4.5)
+        scroll_time = max(3.0, duration - 4.5)
         t_start = time.time()
         while time.time() - t_start < scroll_time:
             progress = (time.time() - t_start) / scroll_time
             await page.evaluate(f"window.scrollTo({{ top: document.body.scrollHeight * {progress ** 1.3}, behavior: 'smooth' }})")
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(0.15)
         # Hold at the bottom showing 2D Centroid Plot & Companion Speech
-        await asyncio.sleep(2.5)
+        await asyncio.sleep(3.5)
 
     elif seg_type == "app_motion_2d":
+        # Direct navigation to Motion Analysis tab
         await page.goto("http://127.0.0.1:5173/#/motion")
         await page.evaluate("window.__setActiveTab && window.__setActiveTab('motion')")
-        btn = await page.query_selector("nav button:has-text('Motion Analysis')")
+        btn = await page.query_selector("button:has-text('Motion Analysis')")
         if btn:
             await btn.click()
+        await page.wait_for_selector("h1:has-text('Motion Analysis'), div:has-text('Motion Analysis')", timeout=10000)
         await page.wait_for_selector("text=Optical Corridor Feed", timeout=10000)
-        await asyncio.sleep(2.5)
+        await page.wait_for_selector("text=Porch Doorbell Monitor", timeout=10000)
+        # Hold at top for 4.0s showing dual camera live streams and reticles
+        await asyncio.sleep(4.0)
         # Smooth scroll down to highlight CAM 1 and CAM 2 2D Centroid Plots and DCI area chart
-        scroll_time = max(2.5, duration - 5.5)
+        scroll_time = 4.5
         t_start = time.time()
         while time.time() - t_start < scroll_time:
             progress = (time.time() - t_start) / scroll_time
             await page.evaluate(f"window.scrollTo({{ top: 560 * {progress ** 1.2}, behavior: 'smooth' }})")
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(0.15)
         # Hold to display 2D centroid loop and DCI area chart
-        await asyncio.sleep(3.0)
+        await asyncio.sleep(max(5.0, (duration + 2.0) - (4.0 + scroll_time)))
 
     elif seg_type == "app_safety_system":
         # Part A: Safety Engine
         await page.goto("http://127.0.0.1:5173/#/safety")
         await page.evaluate("window.__setActiveTab && window.__setActiveTab('safety')")
-        btn_safety = await page.query_selector("nav button:has-text('Safety Engine')")
+        btn_safety = await page.query_selector("button:has-text('Safety Engine')")
         if btn_safety:
             await btn_safety.click()
         await page.wait_for_selector("text=Safety Engine", timeout=10000)
         await asyncio.sleep(2.0)
         await page.evaluate("window.scrollTo({ top: 220, behavior: 'smooth' })")
-        await asyncio.sleep(4.5)
+        await asyncio.sleep(5.0)
 
         # Part B: System & Events
         await page.evaluate("window.__setActiveTab && window.__setActiveTab('system')")
-        btn_sys = await page.query_selector("nav button:has-text('System & Events')")
+        btn_sys = await page.query_selector("button:has-text('System & Events')")
         if btn_sys:
             await btn_sys.click()
         await page.wait_for_selector("text=System & Events", timeout=10000)
         await page.evaluate("window.scrollTo({ top: 0, behavior: 'instant' })")
         await asyncio.sleep(1.5)
         await page.evaluate("window.scrollTo({ top: 380, behavior: 'smooth' })")
-        await asyncio.sleep(max(2.0, duration - 10.0))
+        await asyncio.sleep(max(6.0, (duration + 2.5) - 8.5))
 
     elif seg_type == "app_home_voice_intro":
         await page.goto("http://127.0.0.1:5173/#/home_voice")
         await page.evaluate("window.__setActiveTab && window.__setActiveTab('home_voice')")
-        btn_hv = await page.query_selector("nav button:has-text('Home & Voice')")
+        btn_hv = await page.query_selector("button:has-text('Home & Voice')")
         if btn_hv:
             await btn_hv.click()
         await page.wait_for_selector("text=Alexa Connected", timeout=10000)
         await page.evaluate("window.scrollTo({ top: 130, behavior: 'smooth' })")
-        await asyncio.sleep(1.5)
+        await asyncio.sleep(2.0)
         try:
             led_btn = await page.query_selector("button[title*='amber LED'], button:has-text('Toggle Amber LED')")
             if led_btn:
                 await led_btn.click()
         except Exception:
             pass
-        await asyncio.sleep(max(2.0, duration - 2.5))
+        await asyncio.sleep(max(4.0, (duration + 2.0) - 3.5))
 
     elif seg_type == "app_home_voice_resume":
         await page.goto("http://127.0.0.1:5173/#/home_voice")
         await page.evaluate("window.__setActiveTab && window.__setActiveTab('home_voice')")
-        btn_hv = await page.query_selector("nav button:has-text('Home & Voice')")
+        btn_hv = await page.query_selector("button:has-text('Home & Voice')")
         if btn_hv:
             await btn_hv.click()
         await page.wait_for_selector("text=Alexa Connected", timeout=10000)
         await page.evaluate("window.scrollTo({ top: 130, behavior: 'instant' })")
-        await asyncio.sleep(duration + 0.5)
+        await asyncio.sleep(duration + 2.0)
 
     await context.close()
     await browser.close()
 
-    # Find the recorded webm file
-    webm_files = list(out_webm_dir.glob("*.webm"))
+    # Find the recorded webm file (sorted by newest)
+    webm_files = sorted(out_webm_dir.glob("*.webm"), key=lambda f: f.stat().st_mtime, reverse=True)
     if not webm_files:
         raise RuntimeError(f"No webm recorded for {seg_id}")
     seg["raw_video_path"] = webm_files[0]
@@ -395,9 +412,10 @@ def mux_segment(seg, idx):
         "-i", str(video_path),
         "-i", str(audio_path),
         "-t", f"{duration:.3f}",
-        "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2",
+        "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=#0E1214,setsar=1",
         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", "30",
         "-c:a", "aac", "-b:a", "192k", "-ar", "44100",
+        "-shortest",
         str(out_mp4)
     ]
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -420,21 +438,25 @@ def split_into_phrases(text: str):
 
 
 def generate_subtitles_and_master():
-    print("\n--- [STEP 4] Concatenating Master Video (Clean, No Burned Subtitles) ---", flush=True)
-    concat_list_path = SCRATCH_DIR / "concat_list.txt"
+    print("\n--- [STEP 4] Concatenating Master Video (Filter-Complex Sample-Accurate Sync) ---", flush=True)
     srt_path = ROOT_DIR / "master_subtitles.srt"
-
-    with open(concat_list_path, "w", encoding="utf-8") as f:
-        for seg in SCRIPT_SEGMENTS:
-            f.write(f"file '{seg['muxed_path'].resolve().as_posix()}'\n")
-
-    # Clean Master Video WITHOUT burned subtitles
     master_raw = ROOT_DIR / "master_demo_video.mp4"
+
+    # Use filter_complex concat for sample-accurate A/V synchronization across every segment
+    inputs = []
+    filter_inputs = []
+    for i, seg in enumerate(SCRIPT_SEGMENTS):
+        inputs.extend(["-i", str(seg["muxed_path"].resolve())])
+        filter_inputs.append(f"[{i}:v][{i}:a]")
+
+    filter_str = f"{''.join(filter_inputs)}concat=n={len(SCRIPT_SEGMENTS)}:v=1:a=1[outv][outa]"
+
     concat_cmd = [
         "ffmpeg", "-y",
-        "-f", "concat",
-        "-safe", "0",
-        "-i", str(concat_list_path),
+        *inputs,
+        "-filter_complex", filter_str,
+        "-map", "[outv]",
+        "-map", "[outa]",
         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", "30",
         "-c:a", "aac", "-b:a", "192k", "-ar", "44100",
         str(master_raw)
