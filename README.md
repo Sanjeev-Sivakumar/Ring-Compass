@@ -135,8 +135,7 @@ Ring-Compass/
 ├── app.py                      # Multi-stream optical perception engine
 ├── video_session.py            # Real-time CV2 pipeline & EVM hemodynamic extraction
 ├── start_app.py                # Unified one-command startup orchestrator
-├── build_demo_video.py         # End-to-end synchronized video production pipeline
-├── master_subtitles.srt        # Frame-accurate SRT subtitles
+├── FRICTION_LOG.md             # Detailed developer friction log
 ├── mcp.json                    # Model Context Protocol schema definitions
 ├── requirements.txt            # Python dependencies
 ├── .env.example                # Configuration template
@@ -209,11 +208,10 @@ This automatically launches:
 
 ---
 
-## 📺 Demonstration Video & Subtitles
+## 📺 Demonstration Video
 
-- **Master Subtitles File**: [`master_subtitles.srt`](./master_subtitles.srt)
-- **Demo Video Duration**: **3 minutes 08 seconds** (188.4 seconds), strictly compliant with submission length constraints.
-- **Production Script**: [`build_demo_video.py`](./build_demo_video.py) (Automated pipeline that synthesizes speech, records 1080p browser footage, and renders the demo video).
+- **Demo Video Duration**: **3 minutes 07 seconds** (187.06 seconds), strictly compliant with hackathon submission constraints.
+- **Demonstrated Workflows**: Dual-camera 60 FPS motion tracking, Disorientation Cadence Index (DCI) pacing detection, Eulerian Video Magnification (EVM) non-contact vitals extraction, Model Context Protocol (MCP) tool execution, and physical Alexa-connected ESP32 hardware response.
 
 ---
 
