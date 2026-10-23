@@ -1,0 +1,119 @@
+1
+00:00:00,000 --> 00:00:05,556
+When a vulnerable senior faces a night crisis like wandering or a sudden fall, traditional smart home devices leave families in the dark
+
+2
+00:00:05,556 --> 00:00:11,112
+We built Ring Compass to solve this with touchless spatial safety.
+
+3
+00:00:11,112 --> 00:00:19,487
+The household needs four answers: 01: is it real? 02: what changed? 03: what do I do? And 04: can I go back to sleep? Current tools answer only the first
+
+4
+00:00:19,487 --> 00:00:27,863
+Ring Compass answers all four.
+
+5
+00:00:27,863 --> 00:00:35,663
+Our architecture transforms raw camera feeds into a touchless biometric mesh
+
+6
+00:00:35,663 --> 00:00:43,463
+OpenCV frames feed our local MCP Spatial Server, where EVM extracts vitals while kinetic tracking detects distress, routing directly to local AI triage and Alexa connected devices.
+
+7
+00:00:43,463 --> 00:00:51,371
+As documented in our Friction Log, the cloud-side Alexa Plus console restricts developer SDK access
+
+8
+00:00:51,371 --> 00:00:59,279
+To build with zero AWS cost, we engineered a local Model Context Protocol server running sandboxed JSON-RPC, fully ready for production Alexa Plus.
+
+9
+00:00:59,279 --> 00:01:06,275
+On our live System Overview console, Ring Compass continuously ingests the hallway camera stream in real time
+
+10
+00:01:06,275 --> 00:01:13,271
+Scrolling down displays live dispersion cadence, through-lens heart rate, the active Alexa node, and the 2D spatial trajectory plot.
+
+11
+00:01:13,271 --> 00:01:19,607
+In Motion Analysis, dual cameras monitor corridor and porch feeds simultaneously
+
+12
+00:01:19,607 --> 00:01:25,943
+Scrolling down to the 2D spatial centroid analysis, coordinate matrices expose the erratic pacing loop
+
+13
+00:01:25,943 --> 00:01:32,279
+Below it, the chart displays the Disorientation Cadence Index spiking past 3.0, triaging cognitive distress instantly.
+
+14
+00:01:32,279 --> 00:01:38,391
+How is heartbeat determined through the air? In this EVM breakdown on the abnormal subject in camera two, we isolate forehead pixels to detect sub-visual luminosity shifts
+
+15
+00:01:38,391 --> 00:01:44,503
+A temporal bandpass filter extracts Heart Rate at 104 BPM and Respiration at 22 RPM
+
+16
+00:01:44,503 --> 00:01:50,615
+completely touchless.
+
+17
+00:01:50,615 --> 00:01:57,971
+Our Safety Engine executes a six-stage deterministic gate, triaging between wandering and fall collapse in under 42 milliseconds
+
+18
+00:01:57,971 --> 00:02:05,327
+In System and Events, an immutable audit trail logs all biometric verdicts and dispatch events with zero cloud data leakage.
+
+19
+00:02:05,327 --> 00:02:13,535
+When camera two detects a subject collapsing, our engine identifies a vertical drop exceeding 42 pixels, triggering Profile B
+
+20
+00:02:13,535 --> 00:02:21,743
+The system immediately dispatches an automated emergency email to the caregiver, as verified in this email sent to sanjeevkumaredu8@gmail.com.
+
+21
+00:02:21,743 --> 00:02:28,055
+Inside Home and Voice, physical de-escalation activates upon crisis detection
+
+22
+00:02:28,055 --> 00:02:34,367
+Because a commercial smart bulb was unavailable, ambient pathway lighting is simulated via the edge node LED alongside the physical speaker.
+
+23
+00:02:34,367 --> 00:02:43,534
+[Alexa Connected Hardware Node: Amber LED Glowing · Physical Speaker Beep]
+
+24
+00:02:43,534 --> 00:02:50,110
+With the grounding alert tone completed and the amber pathway light illuminated, the individual is safely guided back to bed.
+
+25
+00:02:50,110 --> 00:02:53,130
+To conclude, Ring Compass answers all four questions: Yes, it is real
+
+26
+00:02:53,130 --> 00:02:56,150
+The spatial cadence changed
+
+27
+00:02:56,150 --> 00:02:59,170
+Alexa and email autonomously intervened
+
+28
+00:02:59,170 --> 00:03:02,190
+And yes, you can go back to sleep
+
+29
+00:03:02,190 --> 00:03:05,210
+All with on-device local privacy and zero cloud costs
+
+30
+00:03:05,210 --> 00:03:08,230
+Thank you.

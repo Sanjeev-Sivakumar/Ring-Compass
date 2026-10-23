@@ -1,0 +1,78 @@
+# Environment & Secrets (NEVER COMMIT REAL CREDENTIALS)
+.env
+.env.*
+!.env.example
+
+# Strict Code-Only Repository: No Photos or Videos
+*.mp4
+*.mov
+*.webm
+*.avi
+*.mkv
+*.wmv
+*.flv
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.webp
+*.ico
+*.tiff
+**/*.mp4
+**/*.mov
+**/*.webm
+**/*.jpg
+**/*.jpeg
+**/*.png
+**/*.gif
+**/*.webp
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Python Cache & Virtual Environments
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+scratch/
+**/scratch/
+rec_*/
+.streamlit/
+
+# Other Projects in Parent Directory
+Fire TV/
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp

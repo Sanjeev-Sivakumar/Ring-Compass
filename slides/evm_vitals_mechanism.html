@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EVM Vitals Mechanism - Non-Contact Biometric Extraction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0E1214;
+      font-family: 'Roboto', -apple-system, sans-serif;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      padding: 60px 80px;
+      position: relative;
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-b: 1px solid #232B30;
+      padding-bottom: 20px;
+    }
+    .meta-tag {
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #10B981;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .main-title {
+      font-size: 38px;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+      color: #FFFFFF;
+    }
+    .subtitle-note {
+      font-size: 15px;
+      color: #8A948D;
+      margin-top: 6px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 820px 1fr;
+      gap: 50px;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    /* Left Frame: Person Video Frame with HUD Overlays */
+    .frame-container {
+      position: relative;
+      width: 820px;
+      height: 480px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #2A363F;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      background: #000;
+    }
+    .frame-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.88;
+      filter: contrast(1.05) brightness(0.95);
+    }
+
+    /* HUD Facial Markings */
+    .hud-box {
+      position: absolute;
+      top: 15%;
+      left: 42%;
+      width: 160px;
+      height: 200px;
+      border: 2px solid #10B981;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+    .hud-corner {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border: 3px solid #10B981;
+    }
+    .hud-corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+    .hud-corner.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+    .hud-corner.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+    .hud-corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+    .roi-forehead {
+      position: absolute;
+      top: 18%;
+      left: 44%;
+      width: 120px;
+      height: 50px;
+      border: 2px dashed #F59E0B;
+      background: rgba(245, 158, 11, 0.18);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #FEF3C7;
+      font-weight: 600;
+      animation: pulseRoi 2s infinite ease-in-out;
+    }
+    @keyframes pulseRoi {
+      0%, 100% { background: rgba(245, 158, 11, 0.15); border-color: #F59E0B; }
+      50% { background: rgba(245, 158, 11, 0.35); border-color: #FBBF24; }
+    }
+
+    .hud-label {
+      position: absolute;
+      top: 10%;
+      left: 42%;
+      background: rgba(16, 185, 129, 0.9);
+      color: #000;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+    .scan-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #10B981, transparent);
+      box-shadow: 0 0 12px #10B981;
+      animation: scanVertical 3s infinite linear;
+    }
+    @keyframes scanVertical {
+      0% { top: 0; }
+      100% { top: 100%; }
+    }
+
+    /* Frame Info Badges */
+    .frame-badge {
+      position: absolute;
+      bottom: 14px;
+      left: 16px;
+      background: rgba(14, 18, 20, 0.85);
+      border: 1px solid #2A363F;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #94A3B8;
+    }
+    .frame-badge strong { color: #10B981; }
+
+    /* Right: Mechanism Explanation & Mathematical Waveforms */
+    .mechanism-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .step-card {
+      background: #151B1E;
+      border: 1px solid #242E35;
+      border-radius: 12px;
+      padding: 18px 22px;
+    }
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .step-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-pill {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #1E293B;
+      color: #38BDF8;
+    }
+    .wave-canvas-wrap {
+      width: 100%;
+      height: 52px;
+      position: relative;
+      margin-top: 8px;
+      background: #090C0E;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #1E272D;
+    }
+
+    /* Metric Result Box */
+    .vitals-result-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 4px;
+    }
+    .vital-tile {
+      background: #13191C;
+      border: 1px solid #27343C;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .vital-tile.highlight {
+      border-color: #D97706;
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.15), #13191C);
+    }
+    .vital-num {
+      font-size: 36px;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.1;
+      margin-top: 4px;
+    }
+    .vital-num.orange { color: #F59E0B; }
+    .vital-num.green { color: #10B981; }
+    .vital-label {
+      font-size: 12px;
+      color: #8A948D;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #232B30;
+      padding-top: 18px;
+      font-size: 13px;
+      color: #6E767D;
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="meta-tag">Eulerian Video Magnification (EVM) Biometric Core</div>
+      <h1 class="main-title">Through-Lens Optical Heartbeat &amp; Respiration Extraction</h1>
+      <p class="subtitle-note">Non-contact hemodynamic pulse extraction by measuring ambient sub-visual skin luminosity shifts.</p>
+    </div>
+    <div style="text-align: right;">
+      <span style="display: inline-block; padding: 6px 14px; background: #1B3B2B; color: #6EE7B7; border: 1px solid #059669; border-radius: 20px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600;">
+        100% TOUCHLESS SENSING
+      </span>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <!-- Left: Person Video Frame with Spatial ROI HUD -->
+    <div class="frame-container">
+      <img src="person_cam2_distress.jpg" alt="CAM 2 Abnormal Person Frame" class="frame-img" />
+      <div class="scan-line"></div>
+      
+      <!-- Facial Tracking HUD (Positioned on CAM 2 subject) -->
+      <div class="hud-label" style="top: 13%; left: 41%;">CAM 2 ABNORMAL SUBJECT DETECTED</div>
+      <div class="hud-box" style="top: 17%; left: 41%; width: 170px; height: 190px;">
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+      </div>
+      
+      <!-- Forehead Skin ROI -->
+      <div class="roi-forehead" style="top: 20%; left: 43%; width: 130px; height: 46px;">
+        EVM ROI [48x32px]
+      </div>
+
+      <div class="frame-badge">
+        <span>Optical Feed: <strong>CAM 2 Porch Doorbell Node</strong></span> • 
+        <span>Forehead Skin Pixels: <strong>1,536 px</strong></span> • 
+        <span>PPG Channel: <strong>Green (&lambda;=530nm)</strong></span>
+      </div>
+    </div>
+
+    <!-- Right: Mechanism Step-by-Step Breakdown -->
+    <div class="mechanism-col">
+      <!-- Step 1 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-title">1. Raw Skin Luminosity Differential</span>
+          <span class="step-pill">&Delta;L = L(t) - L(t-1)</span>
+        </div>
+        <div style="font-size: 12.5px; color: #8A948D;">Measures microscopic periodic variations in light absorption caused by blood volume pulses.</div>
+        <div class="wave-canvas-wrap">
+          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 50">
+            <path d="M0,25 Q25,32 50,22 T100,28 T150,20 T200,30 T250,24 T300,28 T350,21 T400,29 T450,23 T500,25" fill="none" stroke="#64748B" stroke-width="2" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-title">2. Asymmetric Temporal Bandpass Filter</span>
+          <span class="step-pill">0.75 Hz – 2.5 Hz (45–150 BPM)</span>
+        </div>
+        <div style="font-size: 12.5px; color: #8A948D;">Eliminates postural motion artifacts and high-frequency sensor noise.</div>
+        <div class="wave-canvas-wrap">
+          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 500 50">
+            <path d="M0,25 C20,5 30,45 50,25 C70,5 80,45 100,25 C120,5 130,45 150,25 C170,5 180,45 200,25 C220,5 230,45 250,25 C270,5 280,45 300,25 C320,5 330,45 350,25 C370,5 380,45 400,25 C420,5 430,45 450,25 C470,5 480,45 500,25" fill="none" stroke="#38BDF8" stroke-width="2.2" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Live Vitals Tiles -->
+      <div class="vitals-result-box">
+        <div class="vital-tile highlight">
+          <div class="vital-label">Air-Extracted Heart Rate</div>
+          <div class="vital-num orange">104.2 <span style="font-size: 16px; color: #8A948D;">BPM</span></div>
+          <div style="font-size: 11px; color: #F59E0B; margin-top: 4px;">Elevated Cardiac Load (Sundowning)</div>
+        </div>
+
+        <div class="vital-tile">
+          <div class="vital-label">Air-Extracted Respiration</div>
+          <div class="vital-num green">22.4 <span style="font-size: 16px; color: #8A948D;">RPM</span></div>
+          <div style="font-size: 11px; color: #10B981; margin-top: 4px;">Thoracic Displacement Derived</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>[Diagnostic Benchmark Feed // Pre-Recorded Footage for Demo Only]</div>
+    <div>Eulerian Video Magnification Protocol • Zero Wearables Required</div>
+  </div>
+</body>
+</html>

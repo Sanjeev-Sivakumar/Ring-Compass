@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Friction Log Entry</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #FAF8F5;
+      font-family: 'Roboto', -apple-system, sans-serif;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      padding: 70px 100px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .meta-label {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #8A948D;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .page-title {
+      font-size: 42px;
+      font-weight: 400;
+      color: #1C201E;
+      letter-spacing: -0.015em;
+      margin-bottom: 30px;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 10px;
+    }
+    .card {
+      background: #FFFFFF;
+      border: 1px solid #EAE5DC;
+      border-radius: 20px;
+      padding: 44px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 480px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    }
+    .card.obstacle {
+      border-top: 5px solid #C53030;
+    }
+    .card.solution {
+      border-top: 5px solid #1B3B2B;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .card-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 6px;
+      letter-spacing: 0.08em;
+    }
+    .obstacle .card-tag {
+      background: #FEE2E2;
+      color: #991B1B;
+      border: 1px solid #FECACA;
+    }
+    .solution .card-tag {
+      background: #E8EFEA;
+      color: #1B3B2B;
+      border: 1px solid rgba(27, 59, 43, 0.2);
+    }
+    .card-heading {
+      font-size: 24px;
+      font-weight: 500;
+      color: #1C201E;
+      letter-spacing: -0.01em;
+    }
+    .card-body {
+      font-size: 17px;
+      line-height: 1.65;
+      color: #57605A;
+      font-weight: 400;
+    }
+    .card-body strong {
+      color: #1C201E;
+      font-weight: 500;
+    }
+    .stat-pill {
+      margin-top: 24px;
+      padding: 14px 20px;
+      background: #FAF8F5;
+      border: 1px solid #EAE5DC;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #1B3B2B;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #EAE5DC;
+      padding-top: 25px;
+      font-size: 13px;
+      color: #8A948D;
+    }
+    .watermark {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="meta-label">Engineering Log &amp; Cloud Sandbox Adaptation</div>
+    <h1 class="page-title">Friction Log Entry: Localized Testing Over Cloud Console Restraints</h1>
+  </div>
+
+  <div class="cards-grid">
+    <!-- Obstacle Card -->
+    <div class="card obstacle">
+      <div>
+        <div class="card-header">
+          <span class="card-tag">Obstacle</span>
+          <h2 class="card-heading">Cloud Alexa+ Developer Console Restraints</h2>
+        </div>
+        <p class="card-body">
+          The native cloud-side Alexa+ Add-on Developer Console currently displays a <strong>"Coming Soon"</strong> placeholder. It does not permit public SDK deployment or live Echo Show simulator binding during ongoing hackathon cycles.
+        </p>
+      </div>
+      <div class="stat-pill" style="color: #991B1B;">
+        <span>⚠ Status:</span> Cloud Developer Console SDK Deployment Locked
+      </div>
+    </div>
+
+    <!-- Solution Card -->
+    <div class="card solution">
+      <div>
+        <div class="card-header">
+          <span class="card-tag">Solution</span>
+          <h2 class="card-heading">Zero-Cost Sandboxed Open-Source MCP Architecture</h2>
+        </div>
+        <p class="card-body">
+          To maintain rapid development <strong>without incurring AWS infrastructure costs (zero rupees / zero AWS bill)</strong>, we constructed the Ring Compass engine using standard open-source Model Context Protocol (MCP) guidelines. 
+          A self-hosted Python server executing via localized JSON-RPC transports and an open-source local home automation wrapper tests the final Alexa mesh webhooks. Completely sandboxed, zero-cost, and immediately ready to point to production Alexa+ endpoints when public SDK goes live.
+        </p>
+      </div>
+      <div class="stat-pill">
+        <span>✓ Architecture:</span> Zero AWS Cost • Self-Hosted FastMCP Python Server • Production Ready
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <div class="watermark">[Diagnostic Benchmark Feed // Pre-Recorded Footage for Demo Only]</div>
+    <div>Standard Open-Source Model Context Protocol • Zero Cloud Infrastructure Cost</div>
+  </div>
+</body>
+</html>

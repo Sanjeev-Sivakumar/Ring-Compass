@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Four Questions, In Order</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0B0D0E;
+      font-family: 'Roboto', -apple-system, sans-serif;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 220px;
+      position: relative;
+    }
+    .category {
+      font-size: 16px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #6E767D;
+      font-weight: 500;
+      margin-bottom: 50px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeIn 0.8s ease forwards 0.5s;
+    }
+    .questions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 38px;
+      margin-bottom: 70px;
+    }
+    .q-item {
+      display: flex;
+      align-items: baseline;
+      gap: 28px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .q-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 26px;
+      color: #4A5157;
+      font-weight: 500;
+      width: 44px;
+    }
+    .q-text {
+      font-size: 68px;
+      font-weight: 400;
+      color: #FFFFFF;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+    }
+    .q-item.highlight .q-num {
+      color: #7974B8;
+    }
+    .q-item.highlight .q-text {
+      color: #B4B0FF;
+    }
+    .caption {
+      font-size: 24px;
+      font-weight: 400;
+      color: #6E767D;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .caption strong {
+      color: #FFFFFF;
+      font-weight: 500;
+    }
+    .watermark {
+      position: absolute;
+      bottom: 40px;
+      left: 50px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #3F474D;
+      letter-spacing: 0.05em;
+    }
+
+    /* CSS Keyframe Animation Sequence matching audio narration */
+    .q-item.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Timed Auto-Run */
+    .q-item:nth-child(1) { animation: showItem 0.7s forwards 5.2s; }
+    .q-item:nth-child(2) { animation: showItem 0.7s forwards 7.8s; }
+    .q-item:nth-child(3) { animation: showItem 0.7s forwards 10.2s; }
+    .q-item:nth-child(4) { animation: showItem 0.7s forwards 12.6s; }
+    .caption { animation: showItem 0.8s forwards 15.2s; }
+
+    @keyframes showItem {
+      0% { opacity: 0; transform: translateY(18px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="category">Four Questions, In Order</div>
+  
+  <div class="questions-list">
+    <div class="q-item" id="q1">
+      <span class="q-num">01</span>
+      <span class="q-text">is it real?</span>
+    </div>
+    <div class="q-item" id="q2">
+      <span class="q-num">02</span>
+      <span class="q-text">what changed?</span>
+    </div>
+    <div class="q-item" id="q3">
+      <span class="q-num">03</span>
+      <span class="q-text">what do I do?</span>
+    </div>
+    <div class="q-item highlight" id="q4">
+      <span class="q-num">04</span>
+      <span class="q-text">can I go back to sleep?</span>
+    </div>
+  </div>
+
+  <div class="caption" id="caption">
+    Today's tools answer, at most, the first one. <strong>Ring Compass answers all four.</strong>
+  </div>
+
+  <div class="watermark">[Diagnostic Benchmark Feed // Pre-Recorded Footage for Demo Only]</div>
+
+  <script>
+    // JS trigger for frame-accurate recording control
+    window.showQuestion = function(idx) {
+      if (idx >= 1 && idx <= 4) {
+        document.getElementById('q' + idx).classList.add('show');
+      } else if (idx === 5) {
+        document.getElementById('caption').classList.add('show');
+      }
+    };
+    window.showAllQuestions = function() {
+      for (let i = 1; i <= 4; i++) document.getElementById('q' + i).classList.add('show');
+      document.getElementById('caption').classList.add('show');
+    };
+  </script>
+</body>
+</html>

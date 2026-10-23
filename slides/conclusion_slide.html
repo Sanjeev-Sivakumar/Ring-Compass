@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Conclusion - Four Questions Answered &amp; Privacy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0B0D0E;
+      font-family: 'Roboto', -apple-system, sans-serif;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 180px;
+      padding-right: 180px;
+      position: relative;
+    }
+    .category {
+      font-size: 15px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #6E767D;
+      font-weight: 500;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeIn 0.8s ease forwards 0.3s;
+    }
+    .answers-list {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      margin-bottom: 46px;
+    }
+    .ans-item {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ans-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      color: #4A5157;
+      font-weight: 500;
+      width: 38px;
+    }
+    .ans-q {
+      font-size: 34px;
+      font-weight: 400;
+      color: #94A3B8;
+      letter-spacing: -0.015em;
+      width: 440px;
+      shrink: 0;
+    }
+    .ans-arrow {
+      color: #475569;
+      font-size: 24px;
+    }
+    .ans-a {
+      font-size: 30px;
+      font-weight: 500;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ans-pill {
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 10px;
+      border-radius: 4px;
+      background: #1E293B;
+      color: #38BDF8;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .ans-item.highlight .ans-num {
+      color: #10B981;
+    }
+    .ans-item.highlight .ans-q {
+      color: #E2E8F0;
+    }
+    .ans-item.highlight .ans-a {
+      color: #6EE7B7;
+    }
+    .ans-item.highlight .ans-pill {
+      background: #064E3B;
+      color: #A7F3D0;
+    }
+
+    .ans-item.privacy .ans-num {
+      color: #A78BFA;
+    }
+    .ans-item.privacy .ans-q {
+      color: #E2E8F0;
+    }
+    .ans-item.privacy .ans-a {
+      color: #DDD6FE;
+    }
+    .ans-item.privacy .ans-pill {
+      background: #2E1065;
+      color: #C4B5FD;
+    }
+
+    .caption {
+      font-size: 23px;
+      font-weight: 400;
+      color: #8A948D;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #1E272D;
+      padding-top: 24px;
+    }
+    .caption strong {
+      color: #FFFFFF;
+      font-weight: 500;
+    }
+    .watermark {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #3F474D;
+      letter-spacing: 0.05em;
+    }
+
+    .ans-item.show, .caption.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="category">Conclusion // The Four Questions Answered &amp; Privacy Architecture</div>
+
+  <div class="answers-list">
+    <!-- 01 -->
+    <div class="ans-item" id="a1">
+      <span class="ans-num">01</span>
+      <span class="ans-q">is it real?</span>
+      <span class="ans-arrow">&rarr;</span>
+      <div class="ans-a">
+        <span class="ans-pill">Verified Real</span>
+        <span>Touchless EVM vitals (104.2 BPM) &amp; impact physics confirmed</span>
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div class="ans-item" id="a2">
+      <span class="ans-num">02</span>
+      <span class="ans-q">what changed?</span>
+      <span class="ans-arrow">&rarr;</span>
+      <div class="ans-a">
+        <span class="ans-pill">Spatial Shift</span>
+        <span>Pacing loop DCI spiked to 3.85x and mechanical collapse detected</span>
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="ans-item" id="a3">
+      <span class="ans-num">03</span>
+      <span class="ans-q">what do I do?</span>
+      <span class="ans-arrow">&rarr;</span>
+      <div class="ans-a">
+        <span class="ans-pill">De-escalation</span>
+        <span>Amber pathway lighting illuminated &amp; caregiver email alerted</span>
+      </div>
+    </div>
+
+    <!-- 04 -->
+    <div class="ans-item highlight" id="a4">
+      <span class="ans-num">04</span>
+      <span class="ans-q">can I go back to sleep?</span>
+      <span class="ans-arrow">&rarr;</span>
+      <div class="ans-a">
+        <span class="ans-pill">Yes</span>
+        <span>Crisis de-escalated in place without waking the household</span>
+      </div>
+    </div>
+
+    <!-- 05 Privacy -->
+    <div class="ans-item privacy" id="a5">
+      <span class="ans-num">05</span>
+      <span class="ans-q">privacy guarantee</span>
+      <span class="ans-arrow">&rarr;</span>
+      <div class="ans-a">
+        <span class="ans-pill">100% On-Device</span>
+        <span>Zero raw audio/video leaves home · Local volatile RAM processing only</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="caption" id="caption">
+    <div>
+      Ring Compass: <strong>Zero wearables. Zero cloud costs. Pure ambient spatial intelligence.</strong>
+    </div>
+    <div class="watermark">[Diagnostic Benchmark Feed // Pre-Recorded Footage for Demo Only]</div>
+  </div>
+
+  <script>
+    window.showAnswer = function(idx) {
+      if (idx >= 1 && idx <= 5) {
+        document.getElementById('a' + idx).classList.add('show');
+      } else if (idx === 6) {
+        document.getElementById('caption').classList.add('show');
+      }
+    };
+    window.showAllAnswers = function() {
+      for (let i = 1; i <= 5; i++) document.getElementById('a' + i).classList.add('show');
+      document.getElementById('caption').classList.add('show');
+    };
+  </script>
+</body>
+</html>

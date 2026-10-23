@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ring Compass - Title</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #FAF8F5;
+      font-family: 'Roboto', -apple-system, sans-serif;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .accent-dot {
+      width: 14px;
+      height: 14px;
+      background: #E05638;
+      border-radius: 50%;
+      margin-bottom: 24px;
+      box-shadow: 0 0 24px rgba(224, 86, 56, 0.4);
+      animation: pulse 2.5s infinite ease-in-out;
+    }
+    .badge {
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #8A948D;
+      font-weight: 500;
+      margin-bottom: 32px;
+    }
+    .title {
+      font-size: 96px;
+      font-weight: 400;
+      color: #1C201E;
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+    .subtitle {
+      font-size: 27px;
+      font-weight: 400;
+      color: #57605A;
+      line-height: 1.5;
+      max-width: 1100px;
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+    .watermark {
+      position: absolute;
+      bottom: 40px;
+      left: 50px;
+      font-size: 13px;
+      font-family: 'Roboto', monospace;
+      color: #8A948D;
+      letter-spacing: 0.05em;
+    }
+    .meta-tag {
+      position: absolute;
+      bottom: 40px;
+      right: 50px;
+      font-size: 13px;
+      color: #8A948D;
+      font-weight: 500;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="accent-dot"></div>
+  <div class="badge">Ring Compass v2.0 // Spatial Safety Shield &amp; Kinetic Biometric Engine</div>
+  <h1 class="title">Ring Compass</h1>
+  <p class="subtitle">
+    The ambient spatial shield that de-escalates cognitive night crises without waking the household — and does not wake you the second time.
+  </p>
+  <div class="watermark">[Diagnostic Benchmark Feed // Pre-Recorded Footage for Demo Only]</div>
+  <div class="meta-tag">Self-Hosted Model Context Protocol (MCP) • Alexa Connected Device Mesh</div>
+</body>
+</html>

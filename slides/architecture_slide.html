@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>System Architecture & Dataflow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #FAF8F5;
+      font-family: 'Roboto', -apple-system, sans-serif;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      padding: 70px 100px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .header {
+      margin-bottom: 20px;
+    }
+    .meta-label {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #8A948D;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .flow-title {
+      font-size: 38px;
+      font-weight: 400;
+      color: #1C201E;
+      letter-spacing: -0.015em;
+    }
+    .flow-title .arrow {
+      color: #8A948D;
+      margin: 0 10px;
+    }
+
+    /* 3D Isometric Canvas Container */
+    .iso-stage {
+      position: relative;
+      width: 100%;
+      height: 600px;
+      perspective: 1200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Subtle Ground Axis Line */
+    .axis-line {
+      position: absolute;
+      width: 90%;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(27, 59, 43, 0.05) 0%, rgba(27, 59, 43, 0.25) 50%, rgba(27, 59, 43, 0.05) 100%);
+      top: 55%;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    /* Moving Signal Pulses along Axis */
+    .pulse-dot {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      top: -6px;
+      z-index: 2;
+    }
+    .pulse-dot.orange {
+      background: #E05638;
+      box-shadow: 0 0 16px rgba(224, 86, 56, 0.7);
+      animation: travelOrange 6s infinite linear;
+    }
+    .pulse-dot.teal {
+      background: #1B3B2B;
+      box-shadow: 0 0 16px rgba(27, 59, 43, 0.7);
+      animation: travelTeal 6s infinite linear 2s;
+    }
+
+    @keyframes travelOrange {
+      0% { left: 8%; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { left: 92%; opacity: 0; }
+    }
+    @keyframes travelTeal {
+      0% { left: 24%; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { left: 92%; opacity: 0; }
+    }
+
+    /* 3D Isometric Blocks Row */
+    .blocks-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 92%;
+      position: relative;
+      z-index: 5;
+    }
+
+    .node-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 200px;
+      transition: transform 0.4s ease;
+    }
+    .node-unit:hover {
+      transform: translateY(-8px);
+    }
+
+    /* Isometric 3D Cube Construction */
+    .cube-wrap {
+      width: 120px;
+      height: 120px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(55deg) rotateZ(-45deg);
+      margin-bottom: 30px;
+    }
+
+    .node-unit.elevated {
+      margin-bottom: 90px;
+    }
+
+    .cube-face {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    /* Cube Color Themes */
+    /* Theme Red / Terracotta */
+    .cube-red .top    { background: #E9B2A6; transform: translateZ(60px); }
+    .cube-red .left   { background: #D68D7F; transform: rotateY(-90deg) translateZ(60px); }
+    .cube-red .right  { background: #BE7364; transform: rotateX(-90deg) translateZ(60px); }
+
+    /* Theme Silver / Gray */
+    .cube-gray .top   { background: #F2EFEB; transform: translateZ(60px); }
+    .cube-gray .left  { background: #DDD8D0; transform: rotateY(-90deg) translateZ(60px); }
+    .cube-gray .right { background: #C4BEB4; transform: rotateX(-90deg) translateZ(60px); }
+
+    /* Theme Lavender / Purple (AI & Emergency) */
+    .cube-purple .top   { background: #D5CEF7; transform: translateZ(60px); }
+    .cube-purple .left  { background: #B9AFEC; transform: rotateY(-90deg) translateZ(60px); }
+    .cube-purple .right { background: #9E92DA; transform: rotateX(-90deg) translateZ(60px); }
+
+    /* Cube Floating Dot */
+    .cube-orb {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      top: -30px;
+      left: 53px;
+      background: #1B3B2B;
+      box-shadow: 0 0 10px rgba(27, 59, 43, 0.5);
+      animation: floatDot 3s infinite ease-in-out;
+    }
+    .cube-orb.red {
+      background: #E05638;
+      box-shadow: 0 0 12px rgba(224, 86, 56, 0.6);
+    }
+    @keyframes floatDot {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Labels under blocks */
+    .node-title {
+      font-size: 19px;
+      font-weight: 500;
+      color: #1C201E;
+      margin-bottom: 6px;
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+    .node-sub {
+      font-size: 13px;
+      color: #57605A;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.4;
+    }
+
+    .footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #EAE5DC;
+      padding-top: 25px;
+      font-size: 13px;
+      color: #8A948D;
+    }
+    .watermark {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="meta-label">System Architecture &amp; Dataflow</div>
+    <h1 class="flow-title">
+      Ring Camera Feed <span class="arrow">→</span> MCP Spatial Server <span class="arrow">→</span> AI Triage <span class="arrow">→</span> Alexa Connected Mesh
+    </h1>
+  </div>
+
+  <div class="iso-stage">
+    <div class="axis-line">
+      <div class="pulse-dot orange"></div>
+      <div class="pulse-dot teal"></div>
+    </div>
+
+    <div class="blocks-row">
+      <!-- 1. Ring Camera Simulator -->
+      <div class="node-unit">
+        <div class="cube-wrap cube-red">
+          <div class="cube-orb red"></div>
+          <div class="cube-face top"></div>
+          <div class="cube-face left"></div>
+          <div class="cube-face right"></div>
+        </div>
+        <div class="node-title">Ring Camera Feed</div>
+        <div class="node-sub">Raw 30 FPS<br>OpenCV Video Matrices</div>
+      </div>
+
+      <!-- 2. Self-Hosted MCP Spatial Server -->
+      <div class="node-unit">
+        <div class="cube-wrap cube-gray">
+          <div class="cube-face top"></div>
+          <div class="cube-face left"></div>
+          <div class="cube-face right"></div>
+        </div>
+        <div class="node-title">MCP Spatial Server</div>
+        <div class="node-sub">Kinetic Parse Engine<br>EVM Vitals Extractor</div>
+      </div>
+
+      <!-- 3. Local AI Triage (Elevated) -->
+      <div class="node-unit elevated">
+        <div class="cube-wrap cube-purple">
+          <div class="cube-orb"></div>
+          <div class="cube-face top"></div>
+          <div class="cube-face left"></div>
+          <div class="cube-face right"></div>
+        </div>
+        <div class="node-title">Local AI Triage</div>
+        <div class="node-sub">Ollama Llama 3<br>Bedrock FastMCP Bridge</div>
+      </div>
+
+      <!-- 4. Acoustic Triage Path -->
+      <div class="node-unit">
+        <div class="cube-wrap cube-gray">
+          <div class="cube-face top"></div>
+          <div class="cube-face left"></div>
+          <div class="cube-face right"></div>
+        </div>
+        <div class="node-title">Acoustic Triage</div>
+        <div class="node-sub">1.5s Grounding Chime<br>5s Alert Beep Buffer</div>
+      </div>
+
+      <!-- 5. Alexa Connected Device -->
+      <div class="node-unit">
+        <div class="cube-wrap cube-gray">
+          <div class="cube-orb"></div>
+          <div class="cube-face top"></div>
+          <div class="cube-face left"></div>
+          <div class="cube-face right"></div>
+        </div>
+        <div class="node-title">Alexa Connected Device</div>
+        <div class="node-sub">Amber Pathway LED<br>Hardware Speaker Node</div>
+      </div>
+
+      <!-- 6. Caregiver Emergency Response -->
+      <div class="node-unit">
+        <div class="cube-wrap cube-purple">
+          <div class="cube-face top"></div>
+          <div class="cube-face left"></div>
+          <div class="cube-face right"></div>
+        </div>
+        <div class="node-title">Emergency Contact</div>
+        <div class="node-sub">Immediate SMTP Email<br>Autonomous Medical Alert</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <div class="watermark">[Diagnostic Benchmark Feed // Pre-Recorded Footage for Demo Only]</div>
+    <div>Zero-Cost Sandboxed Architecture • 100% Open MCP Standard</div>
+  </div>
+</body>
+</html>
